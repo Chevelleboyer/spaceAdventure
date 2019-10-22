@@ -6,11 +6,22 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"math/rand"
 )
 
-func ChooseRandPlanet(planets map[string]interface{}) interface{}{
-	fmt.Println("Traveling to Neptune")
-	return planets["neptune"]
+func ChooseRandPlanet(planets map[string]interface{}) interface{} {
+	i := 0
+	rand := rand.Intn(8)
+
+	for planet := range planets {
+		if i == rand {
+			fmt.Println("Traveling to ", planet)
+			return planets[planet]
+		} else {
+			i += 1
+		}
+	}
+	return ""
 }
 
 func LookupPlanet(planets map[string]interface{}) interface{} {
