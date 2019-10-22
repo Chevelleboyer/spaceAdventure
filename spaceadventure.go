@@ -38,30 +38,35 @@ func LookupPlanet(planets map[string]interface{}) interface{} {
 	}
 }
 
-func ValidateInput(input string, planets map[string]interface{}) interface{} {
+func ValidateInput(answer string, planets map[string]interface{}) interface{} {
 	//Go until a valid input of Y or N is received
-	if input != "Y" && input != "N" {
+	if answer != "Y" && answer != "N" {
 		fmt.Println("Sorry, I didn't get that.")
-		fmt.Scanln(&input)
-		return ValidateInput(input, planets)
-	} else if input == "N" {
+		fmt.Scanln(&answer)
+		return ValidateInput(answer, planets)
+	} else if answer == "N" {
 		return LookupPlanet(planets)
-	} else if input == "Y" {
+	} else if answer == "Y" {
 		return ChooseRandPlanet(planets)
 	}
 	return ""
 }
 
-func main() {
+func readfile(input string) map[string]interface{} {
 	//Reads json file given from user, if error prints it
-	planetJson, err := ioutil.ReadFile(strings.ToLower(os.Args[1]))
+	planetJson, err := ioutil.ReadFile(strings.ToLower(input))
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
+
 	//Maps the contents of the json file to planets variable
 	var planets map[string]interface{}
 	json.Unmarshal([]byte(planetJson), &planets)
 
+	return planets
+}
+
+func PlayWelcomeScreen(planets map[string]interface{}) (string, map[string]interface {}) {
 	fmt.Println("Welcome to the Solar System!\nThere are 9 planets to explore.\nWhat is your name?")
 
 	var name string
@@ -69,9 +74,14 @@ func main() {
 
 	fmt.Println("Nice to meet you, "+name+".\nLet's go on an adventure.")
 	fmt.Println("Shall I randomly choose a plant for you to visit? (Y or N)")
-	
+
 	var answer string
 	fmt.Scanln(&answer)
 
+	return answer, planets
+}
+
+func main() {
+	answer, planets := PlayWelcomeScreen(readfile(os.Args[1]))
 	fmt.Println(ValidateInput(answer, planets))
 }
